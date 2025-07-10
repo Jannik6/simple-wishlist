@@ -121,7 +121,7 @@ node server.js
 ```
 ## ⭐ Star History
 <div align="center">
-<a href="https://www.star-history.com/#ajb3932/immich-partner-sharing&Date">
+<a href="https://www.star-history.com/#ajb3932/simple-wishlist&Date">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ajb3932/immich-partner-sharing&type=Date&theme=dark" />
    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ajb3932/immich-partner-sharing&type=Date" />
