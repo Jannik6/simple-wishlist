@@ -1,26 +1,24 @@
 version: '3'
 services:
   wishlist:
-    # image: ajb3932/simple-wishlist:latest
-    build: .
-    container_name: wishlist
-    hostname: wishlist
+    build:
+      context: https://github.com/Jannik6/simple-wishlist.git
+      pull: true
+    container_name: wishlist_jannik
+    hostname: wishlist_jannik
     ports:
-      - 8092:8092
+      - 9900:8092
     environment:
       - DBHOST=mongodb:27017
-      - CURRENCY=USD
-      - LIST_NAME=My Wishlist
+      - CURRENCY=EUR
+      - LIST_NAME=Wunschliste Jannik
       - LIST_TYPE=bday
     depends_on:
       - mongodb
 
   mongodb:
     image: mongo:latest
-    container_name: wishlist-db
-    hostname: mongodb
+    container_name: wishlist-db_jannik
+    hostname: mongodb_jannik
     volumes:
-      - mongodb_data:/data/db
-
-volumes:
-  mongodb_data:
+      - /mnt/user/appdata/wishlist/mongodb_jannik:/data/db

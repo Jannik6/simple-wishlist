@@ -215,17 +215,107 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.get('/admin', auth, async (req, res) => {
-    const items = await Item.find().sort({ priority: -1 });
-    res.render('admin', {
+// New route: Show all users
+app.get('/', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.render('user-select', { 
+            users,
+            listType: occasion[LIST_TYPE]
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).send('Error loading users');
+    }
+});
+
+// New route: User-specific wishlist
+app.get('/:username/', async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const wishlistItems = await Item.find({ purchased: false, userId: user._id }).sort({ priority: -1 });
+        const purchasedItems = await Item.find({ purchased: true, userId: user._id }).sort({ _id: -1 });
+        res.render('index', { 
+            wishlistItems, 
+            purchasedItems, 
+            currency: CURRENCY, 
+            currencySymbol: currencySymbols[CURRENCY],
+            listName: `${req.params.username}'s ${LIST_NAME}`,
+            listType: occasion[LIST_TYPE],
+            username: req.params.username
+        });
+    } catch (error) {
+        console.error('Error fetching wishlist:', error);
+        res.status(500).send('Error loading wishlist');
+    }
+});
+
+// New route: User-specific login
+app.get('/:username/login', (req, res) => {
+    res.render('login', {
         listType: occasion[LIST_TYPE],
-        currency: CURRENCY, 
-        currencySymbol: currencySymbols[CURRENCY],
-        items: items
+        username: req.params.username,
+        messages: {
+            error: req.flash('error'),
+            success: req.flash('success'),
+            info: req.flash('info')
+        }
     });
 });
 
-app.post('/admin/add-item', auth, [
+app.post('/:username/login', [
+    body('password').trim()
+], async (req, res, next) => {
+    try {
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) {
+            req.flash('error', 'User not found.');
+            return res.redirect(`/${req.params.username}/login`);
+        }
+        const isValid = await bcrypt.compare(req.body.password, user.password);
+        if (!isValid) {
+            req.flash('error', 'Incorrect password.');
+            return res.redirect(`/${req.params.username}/login`);
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error('Error during login:', err);
+                return next(err);
+            }
+            console.log('User logged in successfully:', user.username);
+            return res.redirect(`/${user.username}/admin`);
+        });
+    } catch (error) {
+        console.error('Error during login:', error);
+        req.flash('error', 'An error occurred during login.');
+        res.redirect(`/${req.params.username}/login`);
+    }
+});
+
+app.get('/:username/admin', auth, async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const items = await Item.find({ userId: user._id }).sort({ priority: -1 });
+        res.render('admin', {
+            listType: occasion[LIST_TYPE],
+            currency: CURRENCY, 
+            currencySymbol: currencySymbols[CURRENCY],
+            items: items,
+            username: req.params.username
+        });
+    } catch (error) {
+        console.error('Error fetching admin items:', error);
+        res.status(500).send('Error loading admin page');
+    }
+});
+
+app.post('/:username/admin/add-item', auth, [
     body('name').trim().escape(),
     body('price').isFloat({ min: 0, max: 1000000 }).toFloat(),
     body('url').isURL().customSanitizer(value => {
@@ -255,15 +345,19 @@ app.post('/admin/add-item', auth, [
     });
 
     try {
-        await Item.create({ name: sanitizedName, price, url, imageUrl, purchased: false, priority });
-        res.redirect('/admin');
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        await Item.create({ name: sanitizedName, price, url, imageUrl, purchased: false, priority, userId: user._id });
+        res.redirect(`/${req.params.username}/admin`);
     } catch (error) {
         console.error('Error adding item:', error);
         res.status(500).send('Error adding item');
     }
 });
 
-app.get('/admin/edit-item/:id', auth, async (req, res) => {
+app.get('/:username/admin/edit-item/:id', auth, async (req, res) => {
     try {
         const item = await Item.findById(req.params.id);
         if (!item) {
@@ -273,7 +367,8 @@ app.get('/admin/edit-item/:id', auth, async (req, res) => {
             listType: occasion[LIST_TYPE],
             currency: CURRENCY,
             currencySymbol: currencySymbols[CURRENCY],
-            item: item
+            item: item,
+            username: req.params.username
         });
     } catch (error) {
         console.error('Error fetching item:', error);
@@ -281,7 +376,7 @@ app.get('/admin/edit-item/:id', auth, async (req, res) => {
     }
 });
 
-app.post('/admin/update-item/:id', auth, [
+app.post('/:username/admin/update-item/:id', auth, [
     body('name').trim().escape(),
     body('price').isFloat({ min: 0, max: 1000000 }).toFloat(),
     body('url').isURL().customSanitizer(value => {
@@ -318,50 +413,83 @@ app.post('/admin/update-item/:id', auth, [
             imageUrl,
             priority
         });
-        res.redirect('/admin');
+        res.redirect(`/${req.params.username}/admin`);
     } catch (error) {
         console.error('Error updating item:', error);
         res.status(500).send('Error updating item');
     }
 });
 
-app.post('/admin/delete-item/:id', auth, async (req, res) => {
+app.post('/:username/admin/delete-item/:id', auth, async (req, res) => {
     try {
         await Item.findByIdAndDelete(req.params.id);
-        res.redirect('/admin');
+        res.redirect(`/${req.params.username}/admin`);
     } catch (error) {
         console.error('Error deleting item:', error);
         res.status(500).send('Error deleting item');
     }
 });
 
-app.get('/', async (req, res) => {
-    const wishlistItems = await Item.find({ purchased: false }).sort({ priority: -1 });
-    const purchasedItems = await Item.find({ purchased: true }).sort({ _id: -1 });
-    res.render('index', { 
-        wishlistItems, 
-        purchasedItems, 
-        currency: CURRENCY, 
-        currencySymbol: currencySymbols[CURRENCY],
-        listName: LIST_NAME,
-        listType: occasion[LIST_TYPE]
+// Route to create new user
+app.get('/register', (req, res) => {
+    res.render('register', {
+        listType: occasion[LIST_TYPE],
+        messages: {
+            error: req.flash('error'),
+            success: req.flash('success')
+        }
     });
 });
 
-app.post('/purchase/:id', async (req, res) => {
+app.post('/register', [
+    body('username').trim().isLength({ min: 3 }).escape(),
+    body('password').trim().isLength({ min: 4 })
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log('Validation errors:', errors.array());
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ username: username });
+        if (existingUser) {
+            req.flash('error', 'Username already exists. Please choose another.');
+            return res.redirect('/register');
+        }
+
+        console.log('Creating new user:', username);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = new User({ username, password: hashedPassword });
+        await user.save();
+        console.log('User created successfully:', username);
+
+        req.flash('success', 'User created successfully. You can now log in.');
+        return res.redirect('/');
+    } catch (error) {
+        console.error('Error in register route:', error);
+        req.flash('error', 'An error occurred during registration. Please try again.');
+        return res.redirect('/register');
+    }
+});
+
+app.post('/:username/purchase/:id', async (req, res) => {
     try {
         await Item.findByIdAndUpdate(req.params.id, { purchased: true });
-        res.redirect('/');
+        res.redirect(`/${req.params.username}/`);
     } catch (error) {
         console.error('Error purchasing item:', error);
         res.status(500).send('Error purchasing item');
     }
 });
 
-app.post('/restore/:id', async (req, res) => {
+app.post('/:username/restore/:id', async (req, res) => {
     try {
         await Item.findByIdAndUpdate(req.params.id, { purchased: false });
-        res.redirect('/');
+        res.redirect(`/${req.params.username}/`);
     } catch (error) {
         console.error('Error restoring item:', error);
         res.status(500).send('Error restoring item');

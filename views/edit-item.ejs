@@ -46,7 +46,7 @@
 <body>
     <div class="container edit-container">
         <h1>Edit Item</h1>
-        <form action="/admin/update-item/<%= item._id %>" method="POST" id="editItemForm">
+        <form action="/<%= username %>/admin/update-item/<%= item._id %>" method="POST" id="editItemForm">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" value="<%= item.name %>" required>
             
@@ -65,7 +65,7 @@
             
             <div class="button-group">
                 <button type="submit">Save Changes</button>
-                <a href="/admin" class="back-btn">Cancel</a>
+                <a href="/<%= username %>/admin" class="back-btn">Cancel</a>
             </div>
         </form>
     </div>

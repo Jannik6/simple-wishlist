@@ -24,7 +24,7 @@
                         <td data-label="Preis"><%= item.price %> <%= currencySymbol %></td>
                         <td data-label="Priorität"><%= item.priority %></td>
                         <td data-label="Gekauft">
-                            <form action="/purchase/<%= item._id %>" method="POST">
+                            <form action="/<%= username %>/purchase/<%= item._id %>" method="POST">
                                 <button type="submit">Gekauft</button>
                             </form>
                         </td>
@@ -45,7 +45,7 @@
                         <td data-label="Preis"><%= item.price %> <%= currencySymbol %></td>
                         <td data-label="URL"><a href="<%= item.url %>">View</a></td>
                         <td data-label="Gekauft">
-                            <form action="/restore/<%= item._id %>" method="POST">
+                            <form action="/<%= username %>/restore/<%= item._id %>" method="POST">
                                 <button type="submit" style="background-color: lightcoral;">Rückgängig machen</button>
                             </form>
                         </td>

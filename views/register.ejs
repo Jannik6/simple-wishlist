@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New User</title>
+    <link rel="icon" type="image/x-icon" href="/images/<%= listType %>">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container" style="max-width: 500px; margin: 0 auto; padding-top: 2rem;">
+        <% if (messages.error && messages.error.length > 0) { %>
+            <div class="alert alert-danger">
+                <%= messages.error %>
+            </div>
+        <% } %>
+
+        <% if (messages.success && messages.success.length > 0) { %>
+            <div class="alert alert-success">
+                <%= messages.success %>
+            </div>
+        <% } %>
+
+        <h1 style="text-align: center;">Create New Wishlist</h1>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
+            Create a new user account and wishlist
+        </p>
+
+        <form action="/register" method="POST" id="register-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Choose a username" autocomplete="username" required autofocus data-lpignore="true" minlength="3">
+            <small style="color: var(--text-muted); margin-top: -1.5rem; margin-bottom: 1rem; display: block;">Minimum 3 characters</small>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter a password" autocomplete="new-password" required data-lpignore="true" minlength="4">
+            <small style="color: var(--text-muted); margin-top: -1.5rem; margin-bottom: 1rem; display: block;">Minimum 4 characters</small>
+            
+            <button type="submit" style="width: 100%;">Create Account</button>
+        </form>
+
+        <p style="text-align: center; margin-top: 1.5rem; color: var(--text-muted);">
+            Already have an account? <br>
+            <a href="/" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Go to User Selection</a>
+        </p>
+    </div>
+</body>
+</html>

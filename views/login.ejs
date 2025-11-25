@@ -21,16 +21,16 @@
             </div>
         <% } %>
 
-        <h1>Admin Login</h1>
-        <form action="/login" method="POST" id="login-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" autocomplete="username" required autofocus data-lpignore="true">
-
+        <h1>Login - <%= username %></h1>
+        <form action="/<%= username %>/login" method="POST" id="login-form">
             <label for="current-password">Password:</label>
             <input type="password" id="current-password" name="password" autocomplete="current-password" required data-lpignore="true">
             
             <button type="submit">Login</button>
         </form>
+        <p style="text-align: center; margin-top: 1.5rem; color: var(--text-muted);">
+            <a href="/" style="color: var(--primary-color); text-decoration: none;">Back to User Selection</a>
+        </p>
     </div>
 </body>
 </html>
