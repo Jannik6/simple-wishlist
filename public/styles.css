@@ -289,6 +289,8 @@ td {
     padding: 1rem;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-color);
+    font-size: larger;
+    font-weight: 600;
 }
 
 tr:last-child td {
