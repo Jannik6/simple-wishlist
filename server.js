@@ -263,6 +263,68 @@ app.post('/admin/add-item', auth, [
     }
 });
 
+app.get('/admin/edit-item/:id', auth, async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id);
+        if (!item) {
+            return res.status(404).send('Item not found');
+        }
+        res.render('edit-item', {
+            listType: occasion[LIST_TYPE],
+            currency: CURRENCY,
+            currencySymbol: currencySymbols[CURRENCY],
+            item: item
+        });
+    } catch (error) {
+        console.error('Error fetching item:', error);
+        res.status(500).send('Error fetching item');
+    }
+});
+
+app.post('/admin/update-item/:id', auth, [
+    body('name').trim().escape(),
+    body('price').isFloat({ min: 0, max: 1000000 }).toFloat(),
+    body('url').isURL().customSanitizer(value => {
+        if (!/^https?:\/\//i.test(value)) {
+            value = 'http://' + value;
+        }
+        return value;
+    }),
+    body('imageUrl').isURL().customSanitizer(value => {
+        if (!/^https?:\/\//i.test(value)) {
+            value = 'http://' + value;
+        }
+        return value;
+    }),
+    body('priority').isInt({ min: 0, max: 10 }).toInt()
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, price, url, imageUrl, priority } = req.body;
+    
+    const sanitizedName = sanitizeHtml(name, {
+        allowedTags: [],
+        allowedAttributes: {}
+    });
+
+    try {
+        await Item.findByIdAndUpdate(req.params.id, {
+            name: sanitizedName,
+            price,
+            url,
+            imageUrl,
+            priority
+        });
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Error updating item:', error);
+        res.status(500).send('Error updating item');
+    }
+});
+
 app.post('/admin/delete-item/:id', auth, async (req, res) => {
     try {
         await Item.findByIdAndDelete(req.params.id);
