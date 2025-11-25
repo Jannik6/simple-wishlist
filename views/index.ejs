@@ -11,19 +11,18 @@
     <div class="container">
         <div class="header">
             <div class="title">
-                <h1><%= listName %></h1>
+                <h1 style="margin-left: 5rem;"><%= listName %></h1>
             </div>
         </div>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th>Image</th>
+                        <th>Bild</th>
                         <th>Name</th>
-                        <th>Price (<%= currency %>)</th>
+                        <th>Preis</th>
                         <th>Priority</th>
-                        <th>URL</th>
-                        <th>Action</th>
+                        <th>Gekauft</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,11 +30,11 @@
                     <tr class="clickable-row" data-url="<%= item.url %>">
                         <td data-label="Image"><div class="img-container"><img src="<%= item.imageUrl %>" alt="<%= item.name %>"></div></td>
                         <td data-label="Name"><%= item.name %></td>
-                        <td data-label="Price"><%= currencySymbol %><%= item.price %></td>
+                        <td data-label="Price"><%= item.price %> <%= currencySymbol %></td>
                         <td data-label="Priority"><%= item.priority %></td>
                         <td data-label="Action">
                             <form action="/purchase/<%= item._id %>" method="POST">
-                                <button type="submit">Purchased</button>
+                                <button type="submit">Gekauft</button>
                             </form>
                         </td>
                     </tr>
@@ -49,11 +48,10 @@
             <table class="purchased-table">
                 <thead>
                     <tr>
-                        <th>Image</th>
+                        <th>Bild</th>
                         <th>Name</th>
-                        <th>Price (<%= currency %>)</th>
-                        <th>URL</th>
-                        <th>Action</th>
+                        <th>Preis</th>
+                        <th>Gekauft</th>
                     </tr>
                 </thead>
                 <tbody>
