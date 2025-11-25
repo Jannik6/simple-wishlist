@@ -22,7 +22,7 @@
                         <td data-label="Bild"><div class="img-container"><img src="<%= item.imageUrl %>" alt="<%= item.name %>"></div></td>
                         <td data-label="Name"><%= item.name %></td>
                         <td data-label="Preis"><%= item.price %> <%= currencySymbol %></td>
-                        <td data-label="Priority"><%= item.priority %></td>
+                        <td data-label="Priorität"><%= item.priority %></td>
                         <td data-label="Gekauft">
                             <form action="/purchase/<%= item._id %>" method="POST">
                                 <button type="submit">Gekauft</button>
