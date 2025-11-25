@@ -5,7 +5,8 @@ const itemSchema = new mongoose.Schema({
     price: Number,
     url: String,
     imageUrl: String,
-    purchased: { type: Boolean, default: false }
+    purchased: { type: Boolean, default: false },
+    priority: { type: Number, default: 0 }
 });
 
 const Item = mongoose.model('Item', itemSchema);

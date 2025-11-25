@@ -216,7 +216,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/admin', auth, async (req, res) => {
-    const items = await Item.find().sort({ _id: -1 });
+    const items = await Item.find().sort({ priority: -1 });
     res.render('admin', {
         listType: occasion[LIST_TYPE],
         currency: CURRENCY, 
@@ -239,14 +239,15 @@ app.post('/admin/add-item', auth, [
             value = 'http://' + value;
         }
         return value;
-    })
+    }),
+    body('priority').isInt({ min: 0, max: 10 }).toInt()
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, price, url, imageUrl } = req.body;
+    const { name, price, url, imageUrl, priority } = req.body;
     
     const sanitizedName = sanitizeHtml(name, {
         allowedTags: [],
@@ -254,8 +255,8 @@ app.post('/admin/add-item', auth, [
     });
 
     try {
-        await Item.create({ name: sanitizedName, price, url, imageUrl, purchased: false });
-        res.redirect('/');
+        await Item.create({ name: sanitizedName, price, url, imageUrl, purchased: false, priority });
+        res.redirect('/admin');
     } catch (error) {
         console.error('Error adding item:', error);
         res.status(500).send('Error adding item');

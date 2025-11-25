@@ -20,6 +20,8 @@
             <input type="url" id="url" name="url" required>
             <label for="imageUrl">Image URL:</label>
             <input type="url" id="imageUrl" name="imageUrl" required>
+            <label for="priority">Priority:</label>
+            <input type="number" id="priority" name="priority" min="0" max="10" value="0" required>
             <button type="submit">Add Item</button>
         </form>
 
@@ -30,6 +32,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Price</th>
+                        <th>Priority</th>
                         <th>URL</th>
                         <th>Image</th>
                         <th>Action</th>
@@ -40,6 +43,7 @@
                     <tr>
                         <td><%= item.name %></td>
                         <td><%= currencySymbol %><%= item.price %></td>
+                        <td><%= item.priority %></td>
                         <td><a href="<%= item.url %>" target="_blank">View</a></td>
                         <td><div class="img-container"><img src="<%= item.imageUrl %>" alt="<%= item.name %>"></div></td>
                         <td>
