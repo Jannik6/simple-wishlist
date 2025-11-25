@@ -215,6 +215,52 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// Route to create new user (MUST be before /:username/ route)
+app.get('/register', (req, res) => {
+    res.render('register', {
+        listType: occasion[LIST_TYPE],
+        messages: {
+            error: req.flash('error'),
+            success: req.flash('success')
+        }
+    });
+});
+
+app.post('/register', [
+    body('username').trim().isLength({ min: 3 }).escape(),
+    body('password').trim().isLength({ min: 4 })
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log('Validation errors:', errors.array());
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ username: username });
+        if (existingUser) {
+            req.flash('error', 'Username already exists. Please choose another.');
+            return res.redirect('/register');
+        }
+
+        console.log('Creating new user:', username);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = new User({ username, password: hashedPassword });
+        await user.save();
+        console.log('User created successfully:', username);
+
+        req.flash('success', 'User created successfully. You can now log in.');
+        return res.redirect('/');
+    } catch (error) {
+        console.error('Error in register route:', error);
+        req.flash('error', 'An error occurred during registration. Please try again.');
+        return res.redirect('/register');
+    }
+});
+
 // New route: Show all users
 app.get('/', async (req, res) => {
     try {
@@ -427,52 +473,6 @@ app.post('/:username/admin/delete-item/:id', auth, async (req, res) => {
     } catch (error) {
         console.error('Error deleting item:', error);
         res.status(500).send('Error deleting item');
-    }
-});
-
-// Route to create new user
-app.get('/register', (req, res) => {
-    res.render('register', {
-        listType: occasion[LIST_TYPE],
-        messages: {
-            error: req.flash('error'),
-            success: req.flash('success')
-        }
-    });
-});
-
-app.post('/register', [
-    body('username').trim().isLength({ min: 3 }).escape(),
-    body('password').trim().isLength({ min: 4 })
-], async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            console.log('Validation errors:', errors.array());
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        const { username, password } = req.body;
-        
-        // Check if user already exists
-        const existingUser = await User.findOne({ username: username });
-        if (existingUser) {
-            req.flash('error', 'Username already exists. Please choose another.');
-            return res.redirect('/register');
-        }
-
-        console.log('Creating new user:', username);
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ username, password: hashedPassword });
-        await user.save();
-        console.log('User created successfully:', username);
-
-        req.flash('success', 'User created successfully. You can now log in.');
-        return res.redirect('/');
-    } catch (error) {
-        console.error('Error in register route:', error);
-        req.flash('error', 'An error occurred during registration. Please try again.');
-        return res.redirect('/register');
     }
 });
 

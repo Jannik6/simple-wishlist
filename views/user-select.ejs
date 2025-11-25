@@ -97,12 +97,8 @@
         <% if (users.length > 0) { %>
             <div class="user-grid">
                 <% users.forEach(user => { %>
-                <div class="user-card">
-                    <h2><%= user.username %></h2>
-                    <p><%= user.username %>'s Wishlist</p>
-                    <a href="/<%= user.username %>/">View Wishlist</a>
-                    <br><br>
-                    <a href="/<%= user.username %>/login" style="background-color: var(--secondary-color);">Login</a>
+                <div class="user-card" href="/<%= user.username %>/">
+                    <h1><%= user.username %></h1>
                 </div>
                 <% }); %>
             </div>
