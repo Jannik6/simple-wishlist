@@ -11,10 +11,8 @@
     <div class="container">
         <div class="header">
             <div class="title">
-                <img src="/images/<%= listType %>" alt="Wishlist Logo" class="logo">
                 <h1><%= listName %></h1>
             </div>
-            <button onclick="window.location.href='/login';" class="btn-login">Login</button>
         </div>
         <div class="table-responsive">
             <table>
@@ -30,12 +28,11 @@
                 </thead>
                 <tbody>
                     <% wishlistItems.forEach(item => { %>
-                    <tr>
+                    <tr class="clickable-row" data-url="<%= item.url %>">
                         <td data-label="Image"><div class="img-container"><img src="<%= item.imageUrl %>" alt="<%= item.name %>"></div></td>
                         <td data-label="Name"><%= item.name %></td>
                         <td data-label="Price"><%= currencySymbol %><%= item.price %></td>
                         <td data-label="Priority"><%= item.priority %></td>
-                        <td data-label="URL"><a href="<%= item.url %>">View</a></td>
                         <td data-label="Action">
                             <form action="/purchase/<%= item._id %>" method="POST">
                                 <button type="submit">Purchased</button>
@@ -77,5 +74,30 @@
             </table>
         </div>
     </div>
+
+    <script>
+        // Make table rows clickable
+        document.querySelectorAll('tr.clickable-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Prevent navigation if clicking on button or form
+                if (e.target.closest('button') || e.target.closest('form')) {
+                    return;
+                }
+                const url = this.getAttribute('data-url');
+                if (url) {
+                    window.open(url, '_blank');
+                }
+            });
+        });
+
+        // Add cursor pointer style on hover
+        document.querySelectorAll('tr.clickable-row').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                if (!this.querySelector('button:hover')) {
+                    this.style.cursor = 'pointer';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

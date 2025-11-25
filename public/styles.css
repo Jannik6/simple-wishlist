@@ -298,6 +298,15 @@ tr:hover {
     background-color: #f8f9fa;
 }
 
+tr.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+tr.clickable-row:hover {
+    background-color: #e9ecef;
+}
+
 .purchased-table {
     opacity: 0.85;
 }
