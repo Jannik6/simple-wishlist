@@ -107,7 +107,7 @@ const auth = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/login');
+    res.redirect('/');
 };
 
 const checkAdminSetup = async (req, res, next) => {
@@ -132,7 +132,7 @@ app.get('/setup', async (req, res) => {
             listType: occasion[LIST_TYPE]
         });
     } else {
-        res.redirect('/login');
+        res.redirect('/');
     }
 });
 
@@ -193,7 +193,7 @@ app.post('/login', [
         if (!user) {
             console.log('Authentication failed:', info.message);
             req.flash('error', info.message);
-            return res.redirect('/login');
+            return res.redirect('/');
         }
         req.logIn(user, (err) => {
             if (err) {

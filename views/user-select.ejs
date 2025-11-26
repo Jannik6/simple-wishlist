@@ -97,8 +97,8 @@
         <% if (users.length > 0) { %>
             <div class="user-grid">
                 <% users.forEach(user => { %>
-                <div class="user-card" href="/<%= user.username %>/">
-                    <h1><%= user.username %></h1>
+                <div class="user-card" onclick="window.location.href='/<%= user.username %>/';">
+                    <h2><%= user.username.charAt(0).toUpperCase() + user.username.slice(1) %></h2>
                 </div>
                 <% }); %>
             </div>
