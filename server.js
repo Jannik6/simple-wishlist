@@ -184,16 +184,17 @@ app.get('/login', (req, res) => {
 app.post('/login', [
     body('username').trim().escape(),
     body('password').trim()
-], (req, res, next) => {  
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.error('Error during authentication:', err);
-            return next(err);
-        }
+], async (req, res, next) => {  
+    try {
+        const user = await User.findOne({ username: req.body.username });
         if (!user) {
-            console.log('Authentication failed:', info.message);
-            req.flash('error', info.message);
-            return res.redirect('/');
+            req.flash('error', 'User not found.');
+            return res.redirect('/login');
+        }
+        const isValid = await bcrypt.compare(req.body.password, user.password);
+        if (!isValid) {
+            req.flash('error', 'Incorrect password.');
+            return res.redirect('/login');
         }
         req.logIn(user, (err) => {
             if (err) {
@@ -201,9 +202,13 @@ app.post('/login', [
                 return next(err);
             }
             console.log('User logged in successfully:', user.username);
-            return res.redirect('/admin');
+            return res.redirect(`/${user.username}/admin`);
         });
-    })(req, res, next);
+    } catch (error) {
+        console.error('Error during login:', error);
+        req.flash('error', 'An error occurred during login.');
+        res.redirect('/login');
+    }
 });
 
 app.get('/logout', (req, res) => {
@@ -289,55 +294,13 @@ app.get('/:username/', async (req, res) => {
             purchasedItems, 
             currency: CURRENCY, 
             currencySymbol: currencySymbols[CURRENCY],
-            listName: `${req.params.username}'s ${LIST_NAME}`,
+            listName: `${req.params.username}'s Wunschliste`,
             listType: occasion[LIST_TYPE],
             username: req.params.username
         });
     } catch (error) {
         console.error('Error fetching wishlist:', error);
         res.status(500).send('Error loading wishlist');
-    }
-});
-
-// New route: User-specific login
-app.get('/:username/login', (req, res) => {
-    res.render('login', {
-        listType: occasion[LIST_TYPE],
-        username: req.params.username,
-        messages: {
-            error: req.flash('error'),
-            success: req.flash('success'),
-            info: req.flash('info')
-        }
-    });
-});
-
-app.post('/:username/login', [
-    body('password').trim()
-], async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username });
-        if (!user) {
-            req.flash('error', 'User not found.');
-            return res.redirect(`/${req.params.username}/login`);
-        }
-        const isValid = await bcrypt.compare(req.body.password, user.password);
-        if (!isValid) {
-            req.flash('error', 'Incorrect password.');
-            return res.redirect(`/${req.params.username}/login`);
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error('Error during login:', err);
-                return next(err);
-            }
-            console.log('User logged in successfully:', user.username);
-            return res.redirect(`/${user.username}/admin`);
-        });
-    } catch (error) {
-        console.error('Error during login:', error);
-        req.flash('error', 'An error occurred during login.');
-        res.redirect(`/${req.params.username}/login`);
     }
 });
 

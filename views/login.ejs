@@ -21,8 +21,11 @@
             </div>
         <% } %>
 
-        <h1>Login - <%= username %></h1>
-        <form action="/<%= username %>/login" method="POST" id="login-form">
+        <h1>Login</h1>
+        <form action="/login" method="POST" id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required autocomplete="username">
+            
             <label for="current-password">Password:</label>
             <input type="password" id="current-password" name="password" autocomplete="current-password" required data-lpignore="true">
             
