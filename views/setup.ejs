@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Setup</title>
+    <title>User erstellen</title>
     <link rel="icon" type="image/x-icon" href="/images/<%= listType %>">
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Admin Setup</h1>
+        <h1>User erstellen</h1>
         <form action="/setup" method="POST">
-            <label for="username">Username:</label>
+            <label for="username">Nutzername:</label>
             <input type="text" id="username" name="username" required autocomplete="new-username">
-            <label for="password">Password:</label>
+            <label for="password">Passwort:</label>
             <input type="password" id="password" name="password" required autocomplete="new-password">
-            <button type="submit">Create Admin User</button>
+            <button type="submit">User erstellen</button>
         </form>
     </div>
 </body>

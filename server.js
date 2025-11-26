@@ -294,7 +294,7 @@ app.get('/:username/', async (req, res) => {
             purchasedItems, 
             currency: CURRENCY, 
             currencySymbol: currencySymbols[CURRENCY],
-            listName: `${req.params.username}'s Wunschliste`,
+            listName: `${req.params.username.charAt(0).toUpperCase() + user.username.slice(1)}'s Wunschliste`,
             listType: occasion[LIST_TYPE],
             username: req.params.username
         });

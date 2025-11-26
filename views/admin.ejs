@@ -3,38 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Add/Delete Items</title>
-    <link rel="icon" type="image/x-icon" href="/images/<%= listType %>">
+    <title>Admin - Wünsche bearbeiten</title>
+    <link rel="icon" type="bild/x-icon" href="/bilds/<%= listType %>">
     <link rel="stylesheet" href="/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Add an Item to the Wishlist</h1>
+        <h1>Füge einen Wunsch zur Liste hinzu</h1>
         <form action="/<%= username %>/admin/add-item" method="POST" id="addItemForm">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
-            <label for="price">Price:</label>
-            <input type="number" id="price" name="price" step="0.01" min="0" required>
+            <label for="preis">Preis:</label>
+            <input type="number" id="preis" name="preis" step="0.01" min="0" required>
             <label for="url">URL:</label>
             <input type="url" id="url" name="url" required>
-            <label for="imageUrl">Image URL:</label>
-            <input type="url" id="imageUrl" name="imageUrl" required>
-            <label for="priority">Priority:</label>
-            <input type="number" id="priority" name="priority" min="0" max="10" value="0" required>
-            <button type="submit">Add Item</button>
+            <label for="bildUrl">Bild URL:</label>
+            <input type="url" id="bildUrl" name="bildUrl" required>
+            <label for="priorität">Priorität:</label>
+            <input type="number" id="priorität" name="priorität" min="0" max="10" value="0" required>
+            <button type="submit">Wunsch hinzufügen</button>
         </form>
 
-        <h2>Current Wishlist Items</h2>
+        <h2>Deine Wünsche</h2>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Price</th>
-                        <th>Priority</th>
+                        <th>Preis</th>
+                        <th>Priorität</th>
                         <th>URL</th>
-                        <th>Image</th>
+                        <th>Bild</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -42,10 +42,10 @@
                     <% items.forEach(item => { %>
                     <tr>
                         <td><%= item.name %></td>
-                        <td><%= currencySymbol %><%= item.price %></td>
-                        <td><%= item.priority %></td>
+                        <td><%= currencySymbol %><%= item.preis %></td>
+                        <td><%= item.priorität %></td>
                         <td><a href="<%= item.url %>" target="_blank">View</a></td>
-                        <td><div class="img-container"><img src="<%= item.imageUrl %>" alt="<%= item.name %>"></div></td>
+                        <td><div class="img-container"><img src="<%= item.bildUrl %>" alt="<%= item.name %>"></div></td>
                         <td>
                             <div class="action-buttons">
                                 <a href="/<%= username %>/admin/edit-item/<%= item._id %>" class="edit-btn"><i class="fas fa-edit"></i></a>
@@ -64,11 +64,11 @@
     <script>
         document.getElementById('addItemForm').addEventListener('submit', function(event) {
             const urlInput = document.getElementById('url');
-            const imageUrlInput = document.getElementById('imageUrl');
+            const bildUrlInput = document.getElementById('bildUrl');
             
-            if (!isValidUrl(urlInput.value) || !isValidUrl(imageUrlInput.value)) {
+            if (!isValidUrl(urlInput.value) || !isValidUrl(bildUrlInput.value)) {
                 event.preventDefault();
-                alert('Please enter valid URLs for both URL and Image URL fields.');
+                alert('Please enter valid URLs for both URL and bild URL fields.');
             }
         });
 

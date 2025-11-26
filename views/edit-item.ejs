@@ -50,22 +50,22 @@
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" value="<%= item.name %>" required>
             
-            <label for="price">Price:</label>
+            <label for="price">Preis:</label>
             <input type="number" id="price" name="price" step="0.01" min="0" value="<%= item.price %>" required>
             
             <label for="url">URL:</label>
             <input type="url" id="url" name="url" value="<%= item.url %>" required>
             
-            <label for="imageUrl">Image URL:</label>
+            <label for="imageUrl">Bild URL:</label>
             <input type="url" id="imageUrl" name="imageUrl" value="<%= item.imageUrl %>" required>
             <img id="imagePreview" src="<%= item.imageUrl %>" alt="<%= item.name %>" class="preview-img">
             
-            <label for="priority">Priority:</label>
+            <label for="priority">Priorität:</label>
             <input type="number" id="priority" name="priority" min="0" max="10" value="<%= item.priority %>" required>
             
             <div class="button-group">
-                <button type="submit">Save Changes</button>
-                <a href="/<%= username %>/admin" class="back-btn">Cancel</a>
+                <button type="submit">Änderungen speichern</button>
+                <a href="/<%= username %>/admin" class="back-btn">Abbrechen</a>
             </div>
         </form>
     </div>
