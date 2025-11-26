@@ -17,6 +17,15 @@
         <div class="table-responsive">
             <table>
                 <tbody>
+                    <thead>
+                        <tr>
+                            <th>Bild</th>
+                            <th>Name</th>
+                            <th>Preis</th>
+                            <th>Priorität</th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <% wishlistItems.forEach(item => { %>
                     <tr class="clickable-row" data-url="<%= item.url %>">
                         <td data-label="Bild"><div class="img-container"><img src="<%= item.imageUrl %>" alt="<%= item.name %>"></div></td>
